@@ -11,16 +11,17 @@ public class LivingEntitity : MonoBehaviour, IDamageable
  protected virtual void Start(){
     health = startingHealth;
  }
- public void TakeHit(float damage, RaycastHit hit) {
+ public virtual void TakeHit(float damage, Vector3 hitPoint, Vector3 hitDirection) {
         TakeDamage(damage);
         
  }
- public void TakeDamage(float damage){
+ public virtual void TakeDamage(float damage){
    health -= damage; 
    if(health <= 0 && !dead){
             Die();
         }
  }
+ [ContextMenu("Self Destruct")]
  protected void Die() {
      dead = true;
      if (OnDeath != null){
