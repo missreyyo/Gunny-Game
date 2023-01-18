@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 [RequireComponent (typeof (PlayerController))]
 [RequireComponent (typeof (GunController))]
 public class Player : LivingEntitity
@@ -20,6 +21,7 @@ GunController gunController;
    
     void Update()
     {
+        
         //movement input
         Vector3 moveInput= new Vector3(Input.GetAxisRaw ("Horizontal"), 0 , Input.GetAxisRaw ("Vertical"));
         Vector3 moveVelocity = moveInput.normalized * moveSpeed;
