@@ -48,7 +48,7 @@ public class MapGenerator : MonoBehaviour
                 allTileCoords.Add(new Coord(x,y));
             }
           }
-        shuffledTileCoords = new Queue<Coord>(Utility.ShuffleArray(allTileCoords.ToArray(),currentMap.seed));
+     //   shuffledTileCoords = new Queue<Coord>(Utility.ShuffleArray(allTileCoords.ToArray(),currentMap.seed));
         //create map holder object  
         string holderName = "Generated Map";
         if(transform.Find (holderName)) {
@@ -93,7 +93,7 @@ public class MapGenerator : MonoBehaviour
             currentObstacleCount --;
         }
         }
-        shuffledOpenTileCoords = new Queue<Coord>(Utility.ShuffleArray(allOpenCoords.ToArray(),currentMap.seed));
+      //  shuffledOpenTileCoords = new Queue<Coord>(Utility.ShuffleArray(allOpenCoords.ToArray(),currentMap.seed));
         //creating the nevmesh mask
         Transform maskLeft = Instantiate(navMeshMaskPrefab, Vector3.left * (currentMap.mapSize.x + maxMapSize.x) / 4f * tileSize, Quaternion.identity) as Transform; 
         maskLeft.parent = mapHolder;  
@@ -152,7 +152,7 @@ public class MapGenerator : MonoBehaviour
         return tileMap [x,y];
     }
      
-    public Coord GetRandomCoord(){
+     public Coord GetRandomCoord(){
         Coord randomCoord = shuffledTileCoords.Dequeue ();
         shuffledTileCoords.Enqueue (randomCoord);
         return randomCoord;

@@ -9,7 +9,7 @@ public class GameUI : MonoBehaviour
     public GameObject gameOverUI;
     void Start()
     {
-        FindObjectOfType<Player>().OnDeath += OnGameOver;
+      //  FindObjectOfType<Player>().OnDeath += OnGameOver;
     }
 
     void OnGameOver(){
