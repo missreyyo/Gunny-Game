@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class GunController : MonoBehaviour
+using Unity.Netcode;
+public class GunController : NetworkBehaviour
 {
     public Transform weaponHold;
     public Gun startingGun;
@@ -17,11 +17,11 @@ public class GunController : MonoBehaviour
         Destroy(equippedGun.gameObject);
     }
        equippedGun = Instantiate (gunToEquip,weaponHold.position, weaponHold.rotation) as Gun;
+       
        equippedGun.transform.parent = weaponHold;
+       equippedGun.GetComponent<NetworkObject>().Spawn();
    }
    public void Shoot(){
-    if(equippedGun != null){
-        equippedGun.Shoot();
-    }
+   
    }
 }

@@ -1,17 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class ProjectTiles : MonoBehaviour
+public class ProjectTiles : NetworkBehaviour
 {
+    public Player parent;
     public LayerMask collisionMask;
-    float speed = 10f;
+    float speed = 100f;
     float damage = 1f;
     float lifeTime = 3f;
     float skinWidth = .1f;
     void Start(){
+      
       Destroy(gameObject, lifeTime);
-      Collider[] initialCollisions = Physics.OverlapSphere(transform.position, .1f, collisionMask);
+      
+      Collider[] initialCollisions = Physics.OverlapSphere(transform.position, 5f, collisionMask);
       if(initialCollisions.Length > 0){
           OnHitObject(initialCollisions[0],transform.position);
       }
@@ -21,6 +25,7 @@ public class ProjectTiles : MonoBehaviour
     }
     void Update()
     {
+     
       float moveDistance = speed * Time.deltaTime;
       CheckCollisions (moveDistance);
       transform.Translate(Vector3.forward * Time.deltaTime * speed);  
@@ -37,7 +42,11 @@ public class ProjectTiles : MonoBehaviour
         IDamageable damageableObject = c.GetComponent<IDamageable> ();
         if (damageableObject != null){
           damageableObject.TakeHit(damage,hitPoint,transform.forward);
-        }
+        }    
         GameObject.Destroy(gameObject);
     }
+    private void OnTriggerEnter(Collider other) {
+      if(!IsOwner) return;    
+       parent.DestroyServerRpc();
+    }    
 }

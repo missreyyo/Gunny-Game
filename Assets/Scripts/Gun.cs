@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class Gun : MonoBehaviour
+public class Gun : NetworkBehaviour
 {
    public Transform muzzle;
    public ProjectTiles projectile;
@@ -15,13 +16,7 @@ public class Gun : MonoBehaviour
 
    float nextShotTime;
    public void Shoot(){
-    if(Time.time > nextShotTime){
-        nextShotTime = Time.time + msBetweenShots / 1000f;
-        ProjectTiles newProjectile = Instantiate (projectile,muzzle.position, muzzle.rotation) as ProjectTiles;
-        newProjectile.SetSpeed (muzzleVelocity);
 
-        Instantiate(shell,shellEjection.position,shellEjection.rotation);
-    }
     
    }
 }

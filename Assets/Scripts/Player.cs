@@ -6,17 +6,20 @@ using TMPro;
 using Unity.Collections;
 
 [RequireComponent (typeof (PlayerController))]
-[RequireComponent (typeof (GunController))]
+
 public class Player : NetworkBehaviour
 {
 public float moveSpeed = 5f;   
 Camera viewCamera;
 PlayerController controller;
-GunController gunController;
+Player player;
 [SerializeField] private MeshRenderer meshRenderer;
 [SerializeField] private TextMeshProUGUI playerName;
+[SerializeField] private GameObject bullet;
 private NetworkVariable<FixedString128Bytes> networkPlayerName = new NetworkVariable<FixedString128Bytes>("Player: 0", NetworkVariableReadPermission.Everyone,NetworkVariableWritePermission.Server);
 public List<Color> colors = new List<Color>();
+
+public float timer = 0f;
 
     private void Awake(){
         meshRenderer = GetComponent<MeshRenderer>();
@@ -26,18 +29,39 @@ public List<Color> colors = new List<Color>();
     {
         
         controller = GetComponent<PlayerController> ();
-        gunController = GetComponent<GunController> ();
+
         viewCamera = Camera.main;
     }
+      public Transform muzzle;
+   public ProjectTiles projectile;
+   public float msBetweenShots = 0.1f; 
+   public float muzzleVelocity = 35f;
+
+ 
+
+
+   float nextShotTime;
+   public void Shoot(){
+   /*
+     if(Time.time > nextShotTime){
+        Debug.Log("ateş edildi");
+        nextShotTime = Time.time + msBetweenShots;
+        ProjectTiles newProjectile = Instantiate (projectile,muzzle.position, muzzle.rotation) as ProjectTiles;
+        newProjectile.SetSpeed (muzzleVelocity);
+        newProjectile.GetComponent<NetworkObject>().Spawn();
+        
+    }*/
+   }
     public override void OnNetworkSpawn(){
-          transform.position = new Vector3 (Random.RandomRange(-8,9),0,Random.RandomRange(-9,9));
-          transform.rotation = new Quaternion (0,180,0,0);
+          UpdatePositionServerRpc();
           networkPlayerName.Value = "Player: "+ (OwnerClientId + 1);
           playerName.text = networkPlayerName.Value.ToString();
           meshRenderer.material.color = colors[(int) OwnerClientId%colors.Count ];
 
               
     }    
+    //List to hold all the instantiated bullets
+    [SerializeField] private List<GameObject> spawnedBullets = new List<GameObject>();
 
    
     void Update()
@@ -58,7 +82,36 @@ public List<Color> colors = new List<Color>();
         }
         //weapon input
         if(Input.GetMouseButton(0)){
-            gunController.Shoot();
+            timer += Time.deltaTime;
+            if(timer> 0.3f){
+                nextShotTime = Time.time + msBetweenShots;
+                ShootServerRpc();
+                timer = 0f;
+            }
         }
     }
+    [ServerRpc] 
+    private void ShootServerRpc(){
+  
+        ProjectTiles newProjectile = Instantiate (projectile,muzzle.position, muzzle.rotation) as ProjectTiles;
+        newProjectile.SetSpeed (muzzleVelocity);
+        newProjectile.GetComponent<ProjectTiles>().parent = this;
+        newProjectile.GetComponent<NetworkObject>().Spawn();
+    
+
+    }
+    [ServerRpc(RequireOwnership = false)]
+    public void DestroyServerRpc(){
+        GameObject toDestroy = spawnedBullets[0];
+        toDestroy.GetComponent<NetworkObject>().Despawn(destroy:true);
+        spawnedBullets.Remove(toDestroy);
+        Destroy(toDestroy);
+    }
+    [ServerRpc]
+    private void UpdatePositionServerRpc(){
+          transform.position = new Vector3 (Random.RandomRange(-8,9),0,Random.RandomRange(-9,9));
+          transform.rotation = new Quaternion (0,180,0,0);
+    }
+ 
+
 }

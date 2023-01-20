@@ -18959,7 +18959,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -351, y: 240}
+  m_AnchoredPosition: {x: -358, y: 216}
   m_SizeDelta: {x: 483.68, y: 228.252}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1058134609
@@ -22013,6 +22013,11 @@ MonoBehaviour:
     NetworkPrefabs:
     - Override: 0
       Prefab: {fileID: 6664740942613573814, guid: ac9d3b7dd58602c4fb7e9da5a562d15f, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 4549672259491212153, guid: 5b3b6c27107dfd0478ce703d729afd8d, type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
