@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using UnityEngine.UI;
 using TMPro;
 using Unity.Collections;
 
@@ -13,6 +14,7 @@ public float moveSpeed = 5f;
 Camera viewCamera;
 PlayerController controller;
 Player player;
+public InputField inputfield;
 [SerializeField] private MeshRenderer meshRenderer;
 [SerializeField] private TextMeshProUGUI playerName;
 [SerializeField] private GameObject bullet;
@@ -57,9 +59,15 @@ public float timer = 0f;
           networkPlayerName.Value = "Player: "+ (OwnerClientId + 1);
           playerName.text = networkPlayerName.Value.ToString();
           meshRenderer.material.color = colors[(int) OwnerClientId%colors.Count ];
+          ChatController.instance.AddChatServerRpc("Player" + (OwnerClientId + 1).ToString() + " joined the room");
+          inputfield = ChatController.instance.chatInputField;
 
               
-    }    
+    }   
+    public override void OnNetworkDespawn(){
+        base.OnNetworkDespawn();
+        ChatController.instance.AddChatServerRpc("Player"+ (OwnerClientId+1).ToString()+ " left the chat");
+    } 
     //List to hold all the instantiated bullets
     [SerializeField] private List<GameObject> spawnedBullets = new List<GameObject>();
 
