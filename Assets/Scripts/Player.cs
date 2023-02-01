@@ -14,7 +14,7 @@ public float moveSpeed = 5f;
 Camera viewCamera;
 PlayerController controller;
 Player player;
-public InputField inputfield;
+InputField inputfield;
 [SerializeField] private MeshRenderer meshRenderer;
 [SerializeField] private TextMeshProUGUI playerName;
 [SerializeField] private GameObject bullet;
@@ -56,17 +56,21 @@ public float timer = 0f;
    }
     public override void OnNetworkSpawn(){
           UpdatePositionServerRpc();
-          networkPlayerName.Value = "Player: "+ (OwnerClientId + 1);
+          networkPlayerName.Value = "Player: "+ (OwnerClientId );
           playerName.text = networkPlayerName.Value.ToString();
           meshRenderer.material.color = colors[(int) OwnerClientId%colors.Count ];
-          ChatController.instance.AddChatServerRpc("Player" + (OwnerClientId + 1).ToString() + " joined the room");
+          if(IsLocalPlayer){
+            AddChatServerRpc("Player" + (OwnerClientId ).ToString() + " joined the room");
           inputfield = ChatController.instance.chatInputField;
-
+          inputfield.onSubmit.AddListener(SendMessageFromUI);
+}
+          
               
     }   
     public override void OnNetworkDespawn(){
         base.OnNetworkDespawn();
-        ChatController.instance.AddChatServerRpc("Player"+ (OwnerClientId+1).ToString()+ " left the chat");
+        AddChatServerRpc("Player"+ (OwnerClientId).ToString()+ " left the chat");
+        inputfield = ChatController.instance.chatInputField;
     } 
     //List to hold all the instantiated bullets
     [SerializeField] private List<GameObject> spawnedBullets = new List<GameObject>();
@@ -120,6 +124,22 @@ public float timer = 0f;
           transform.position = new Vector3 (Random.RandomRange(-8,9),0,Random.RandomRange(-9,9));
           transform.rotation = new Quaternion (0,180,0,0);
     }
- 
+    public void SendMessageFromUI(string message){
+        inputfield.text = "";
+        AddChatServerRpc(message);
+    
+     //   chatInputField.Select();
+        
+    }
+    [ServerRpc(RequireOwnership = false)]
+    void AddChatServerRpc(string chatString){
+       AddChatClientRpc(chatString);
+       
+    }
+    [ClientRpc]
+     void AddChatClientRpc(string chatString){
+       ChatController.instance.AddChat(chatString,OwnerClientId); 
+    }
+    
 
 }

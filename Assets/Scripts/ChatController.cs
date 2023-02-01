@@ -15,22 +15,12 @@ public class ChatController : MonoBehaviour
         instance = this;
     }
 
-    // Update is called once per frame
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Alpha1)) 
-             AddChatServerRpc(Random.value.ToString());
-    }
-    [ServerRpc]
-    public void AddChatServerRpc(string chatString){
-        chat.Enqueue(chatString);
+
+   // [ServerRpc]
+    public void AddChat(string chatString,ulong id){
+        chat.Enqueue("Player "+id + ":" + chatString);
         if(chat.Count > 10) chat.Dequeue();
         chatText.text = string.Join("\n",chat);
     }
-    public void SendMessageFromUI(string message){
-        chatInputField.text = "";
-        AddChatServerRpc(message);
-        chatInputField.Select();
-        
-    }
+ 
 }
